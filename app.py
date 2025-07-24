@@ -41,7 +41,7 @@ def get_gsheet():
         try:
             creds_json_string = os.environ["GOOGLE_APPLICATION_CREDENTIALS_JSON"]
             creds_dict = json.loads(creds_json_string)
-            st.success("Credentials loaded from environment variable.")
+            st.success("Credentials loaded ...")
         except json.JSONDecodeError:
             st.error("Error decoding GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable. Please check your secret format.")
         except Exception as e:
