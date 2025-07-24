@@ -41,7 +41,7 @@ def get_gsheet():
         try:
             creds_json_string = os.environ["GOOGLE_APPLICATION_CREDENTIALS_JSON"]
             creds_dict = json.loads(creds_json_string)
-            st.success("Credentials loaded from GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable.")
+            st.success("Credentials loaded ...")
         except json.JSONDecodeError:
             st.error("Error decoding GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable. Please check your secret format.")
         except Exception as e:
@@ -133,7 +133,6 @@ if submitted:
             ])
             st.success("✅ Submission received. Thank you!")
             st.markdown("📧 Please [email your receipt](mailto:president.hagepta@gmail.com) with the subject 'PTA Reimbursement Receipt'.")
-            st.experimental_rerun() # Rerun to clear form and show success message
         except Exception as e:
             st.error(f"Failed to submit reimbursement to Google Sheet: {e}")
             st.warning("Please check your Google Sheet permissions and ensure the sheet name and worksheet name are correct.")
