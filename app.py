@@ -25,6 +25,9 @@ reimbursement_categories = [
 ]
 
 # ---------- Google Sheets Setup ----------
+# Use st.cache_resource to cache the gspread client and worksheet
+# This ensures the connection and authorization only happen once per app run
+@st.cache_resource
 def get_gsheet():
     scope = [
         "https://spreadsheets.google.com/feeds",
@@ -33,7 +36,7 @@ def get_gsheet():
 
     creds_dict = None # Initialize creds_dict to None
 
-    # --- NEW: Try to load credentials from environment variable (for Cloud Run) ---
+    # --- Try to load credentials from environment variable (for Cloud Run) ---
     if "GOOGLE_APPLICATION_CREDENTIALS_JSON" in os.environ:
         try:
             creds_json_string = os.environ["GOOGLE_APPLICATION_CREDENTIALS_JSON"]
@@ -68,28 +71,34 @@ def get_gsheet():
         st.error("Credentials dictionary is empty. Cannot authorize gspread.")
         st.stop()
 
-
 # Initialize the Google Sheet connection
 sheet = get_gsheet()
+
+# Cache the PDF file reading as well, as it's static content
+@st.cache_resource
+def get_pdf_data(file_path):
+    try:
+        with open(file_path, "rb") as f:
+            return f.read()
+    except FileNotFoundError:
+        st.warning("Reimbursement PDF form not found. Please ensure 'PaymentAuthorizationRequestforReimbursement.pdf' is in the same directory.")
+        return None
+    except Exception as e:
+        st.error(f"Error loading PDF for download: {e}")
+        return None
 
 # ---------- Streamlit UI ----------
 st.title(":money_with_wings: PTA Reimbursement Form")
 
 # Download button for the PDF form
-# Ensure "PaymentAuthorizationRequestforReimbursement.pdf" is in the same directory as app.py
-try:
-    with open("PaymentAuthorizationRequestforReimbursement.pdf", "rb") as f:
-        st.download_button(
-            "📄 Download reimbursement form",
-            data=f.read(),
-            file_name="HagepPTA_Reimbursement.pdf",
-            mime="application/pdf"
-        )
-except FileNotFoundError:
-    st.warning("Reimbursement PDF form not found. Please ensure 'PaymentAuthorizationRequestforReimbursement.pdf' is in the same directory.")
-except Exception as e:
-    st.error(f"Error loading PDF for download: {e}")
-
+pdf_data = get_pdf_data("PaymentAuthorizationRequestforReimbursement.pdf")
+if pdf_data:
+    st.download_button(
+        "📄 Download reimbursement form",
+        data=pdf_data,
+        file_name="HagepPTA_Reimbursement.pdf",
+        mime="application/pdf"
+    )
 
 st.divider()
 
@@ -124,7 +133,7 @@ if submitted:
             ])
             st.success("✅ Submission received. Thank you!")
             st.markdown("📧 Please [email your receipt](mailto:president.hagepta@gmail.com) with the subject 'PTA Reimbursement Receipt'.")
-            
+            st.experimental_rerun() # Rerun to clear form and show success message
         except Exception as e:
             st.error(f"Failed to submit reimbursement to Google Sheet: {e}")
             st.warning("Please check your Google Sheet permissions and ensure the sheet name and worksheet name are correct.")
