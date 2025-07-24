@@ -5,7 +5,7 @@ from datetime import date
 from oauth2client.service_account import ServiceAccountCredentials
 
 reimbursement_categories = [
-    "5th Grade Promotion",
+    
     "Book Fair",
     "Family Night",
     "Hage Fall Festival",
@@ -20,6 +20,7 @@ reimbursement_categories = [
     "Teacher Appreciation",
     "Teacher Reimbursements",
     "Variety Show",
+    "5th Grade Promotion",
     "Other"
 ]
 
@@ -44,7 +45,7 @@ st.title(":money_with_wings: PTA Reimbursement Form")
 with open("PaymentAuthorizationRequestforReimbursement.pdf", "rb") as f:
     st.download_button("📄 Download reimbursement form",
                        data=f.read(),
-                       file_name="Teacher_Reimbursement.pdf",
+                       file_name="HagepPTA_Reimbursement.pdf",
                        mime="application/pdf")
 
 st.divider()
