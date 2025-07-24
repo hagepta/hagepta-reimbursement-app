@@ -1,0 +1,48 @@
+# This workflow deploys the Streamlit app to Google Cloud Run.
+
+name: Deploy Streamlit App to Cloud Run
+
+on:
+  push:
+    branches:
+      - main # Trigger on pushes to the 'main' branch
+
+env:
+  PROJECT_ID: hage-pta # Replace with your GCP Project ID
+  SERVICE_NAME: hagepta-reimbursement-app # Replace with your Cloud Run service name
+  REGION: us-central1 # Replace with your desired GCP region (e.g., us-central1, europe-west1)
+  SECRET_NAME: streamlit-service-account-key # The name of your secret in Secret Manager
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # Use the latest Ubuntu runner
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Action to checkout your repository code
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2 # Action to authenticate with GCP
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }} # Use the GitHub secret for credentials
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2 # Action to set up gcloud CLI
+        with:
+          project_id: ${{ env.PROJECT_ID }} # Use the project ID from environment variables
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --source . \
+            --region ${{ env.REGION }} \
+            --allow-unauthenticated \
+            --port 8080 \
+            --set-secrets=GOOGLE_APPLICATION_CREDENTIALS_JSON=${{ env.SECRET_NAME }}:latest \
+            --project=${{ env.PROJECT_ID }} # Explicitly specify project for safety
+        # This command will:
+        # 1. Trigger Cloud Build to build your Docker image from the Dockerfile in '.'
+        # 2. Push the image to Google Artifact Registry.
+        # 3. Deploy the new image to your Cloud Run service.
+        # 4. Inject the GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable from Secret Manager.
