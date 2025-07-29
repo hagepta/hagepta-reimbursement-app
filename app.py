@@ -140,7 +140,7 @@ def upload_file_to_gcs(uploaded_file, folder_prefix, submitter_name, submission_
         return None
 
 # ---------- Streamlit UI ----------
-st.title(":money_with_wings: PTA Payment Authorization Form")
+st.title(":money_with_wings: PTA Payment Authorization Form :money_with_wings:")
 
 st.markdown("""
             1. Download the payment authorization PDF & fill it out.
