@@ -1,19 +1,34 @@
-# Use an official Python runtime as a parent image.
-# Using a specific slim-buster version for smaller image size and reproducibility.
-FROM python:3.9-slim-buster
+# Use a Conda-enabled base image.
+# mambaforge is recommended for faster builds compared to miniconda/anaconda.
+# We'll let environment.yml dictate the Python version.
+FROM condaforge/mambaforge:latest
 
 # Set the working directory in the container.
 WORKDIR /app
 
-# Copy only the requirements file first to leverage Docker's layer caching.
-# If requirements.txt doesn't change, this layer won't be rebuilt.
+# Copy the environment.yml file into the container.
+# This allows Docker to cache this layer.
+COPY environment.yml .
+
+# Create the Conda environment from environment.yml.
+# -n base: Install into the base environment (simpler for single-app containers).
+# --file: Specify the environment file.
+# --yes: Auto-accept prompts.
+# This step will install Python 3.12 and pip (and any other conda-specified packages).
+RUN mamba env update --name base --file environment.yml && \
+    mamba clean --all --yes # Clean up unnecessary files to reduce image size
+
+# Activate the base environment for subsequent commands.
+# This ensures that the Python and packages from your Conda env are used.
+SHELL ["conda", "run", "-n", "base", "/bin/bash", "-c"]
+
+# Copy requirements.txt AFTER the conda environment is set up.
+# This allows pip to install into the correct environment.
 COPY requirements.txt .
 
-# Install any needed packages specified in requirements.txt.
+# Install any pip-specific packages.
 # --no-cache-dir: Prevents pip from caching downloaded packages, reducing image size.
-# --upgrade pip: Ensures pip is up-to-date.
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Explicitly copy your Streamlit application file.
 COPY app.py .
@@ -27,8 +42,5 @@ COPY PaymentAuthorizationRequestforReimbursement.pdf .
 EXPOSE 8080
 
 # Define the command to run your Streamlit application.
-# ENTRYPOINT is used here to ensure the Streamlit command is always executed.
-# --server.port=8080: Tells Streamlit to listen on port 8080.
-# --server.address=0.0.0.0: Tells Streamlit to listen on all available network interfaces,
-#                           crucial for Cloud Run to route traffic to your app.
-ENTRYPOINT ["streamlit", "run", "app.py", "--server.port=8080", "--server.address=0.0.0.0"]
+# Use 'conda run -n base' to execute Streamlit within the Conda environment.
+ENTRYPOINT ["conda", "run", "-n", "base", "streamlit", "run", "app.py", "--server.port=8080", "--server.address=0.0.0.0"]
