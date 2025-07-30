@@ -48,7 +48,7 @@ def get_gsheet():
         try:
             creds_json_string = os.environ["GOOGLE_APPLICATION_CREDENTIALS_JSON"]
             creds_dict = json.loads(creds_json_string)
-            st.success("Credentials loaded from GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable.")
+            #st.success("Credentials loaded from GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable.")
         except json.JSONDecodeError:
             st.error("Error decoding GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable. Please check your secret format.")
         except Exception as e:
@@ -145,7 +145,7 @@ def upload_file_to_gcs(uploaded_file, folder_prefix, submitter_name, submission_
         return None
 
 # ---------- Streamlit UI ----------
-st.title(":money_with_wings: PTA Payment Authorization Form :money_with_wings:")
+st.title(":money_with_wings: PTA Payment Authorization Form")
 
 st.markdown("""
             1. Download the payment authorization PDF & fill it out.
