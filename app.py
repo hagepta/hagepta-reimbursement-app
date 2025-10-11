@@ -152,6 +152,9 @@ st.markdown("""
             2. Upload your completed payment authorization PDF.
             3. Upload any supporting receipts for your expenses.
             4. Fill out the reimbursement form details.
+             
+            Watch a brief screencast of the process here: [YouTube](https://www.youtube.com/watch?v=h7DBVq-8WfU)
+
             """)
 
 pdf_data = get_pdf_data("PaymentAuthorizationRequestforReimbursement.pdf")
