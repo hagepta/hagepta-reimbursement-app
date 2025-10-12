@@ -155,6 +155,14 @@ st.markdown("""
              
             Watch a brief screencast of the process here: [YouTube](https://www.youtube.com/watch?v=h7DBVq-8WfU)
 
+            How to fill out a PDF form on a Mac: [Link](https://support.apple.com/guide/preview/fill-out-a-pdf-form-prvw11496/mac)
+
+            How to fill out a PDF form with Adobe : [Link](https://www.adobe.com/acrobat/online/sign-pdf.html?sdid=JHDDWB6D&mv=search&mv2=paidsearch&ef_id=Cj0KCQjwo63HBhCKARIsAHOHV_VezsPhIraAc6OYp6PWWsiiR40kqvd7e6Tg9Ctmj_uGOjN0OK26JmoaAqgmEALw_wcB:G:s&s_kwcid=AL!3085!3!648574725338!e!!g!!how%20to%20fill%20out%20pdf!19646838947!148704053911&cmpn=mobile-search&gad_source=1&gad_campaignid=19646838947&gbraid=0AAAAADsP8ZRYTJ3id1-hCXraUpT1zpGUU&gclid=Cj0KCQjwo63HBhCKARIsAHOHV_VezsPhIraAc6OYp6PWWsiiR40kqvd7e6Tg9Ctmj_uGOjN0OK26JmoaAqgmEALw_wcB)
+
+            How to sign a PDF form electronically on a Mac: [Link](https://support.apple.com/guide/preview/fill-out-and-sign-pdf-forms-prvw35725/mac)
+
+            How to sign a PDF form electronically with Adobe: [Link](https://helpx.adobe.com/ie/acrobat/using/signing-pdfs.html)
+
             """)
 
 pdf_data = get_pdf_data("PaymentAuthorizationRequestforReimbursement.pdf")
